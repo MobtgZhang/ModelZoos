@@ -1,3 +1,5 @@
+import os
+import uuid
 import argparse
 def get_args():
     parser = argparse.ArgumentParser(description="This is the text classification demo.")
@@ -14,6 +16,17 @@ def get_args():
     parser.add_argument("--num-filters",type=int,default=32,help="the number filters of the model.")
     parser.add_argument("--epoch-times",type=int,default=10,help="the training times of the model.")
     parser.add_argument("--learning-rate",type=float,default=1e-4,help="the learning rate of the model.")
+    parser.add_argument("--model",type=str,default="TextCNN",help="the model name.")
     parser.add_argument("--cuda", action='store_false', help="Training model by cuda.")
     args = parser.parse_args()
     return args
+def check_args(args):
+    args.dataset = args.dataset.lower()
+    if not os.path.exists(args.result_dir):
+        os.mkdir(args.result_dir)
+    args.model_name = args.model + "_" + str(uuid.uuid1()).replace('-','').upper()
+    args.log_dir = os.path.join(args.log_dir,args.dataset)
+    result_path = os.path.join(args.result_dir,args.dataset)
+    if not os.path.exists(result_path):
+        os.makedirs(result_path)
+    

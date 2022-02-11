@@ -33,7 +33,7 @@ class Evaluator:
             predict_list.append(predict)
         y_true = np.hstack(target_list)
         y_pred = np.hstack(predict_list)
-        corr = confusion_matrix(target_list,predict_list)
+        corr = confusion_matrix(y_true,y_pred)
         self.corr_list.append(corr)
         jac_score_value = jaccard_score(y_true, y_pred, average='macro')
         acc_score_value = accuracy_score(y_true, y_pred)

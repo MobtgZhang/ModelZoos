@@ -1,5 +1,4 @@
 import os
-import time
 import logging
 
 import torch
@@ -9,9 +8,9 @@ from torch.utils.data import DataLoader
 
 from utils import build_simplifyweibo_4_moods_dataset
 from utils import LabelReviewSplitWordsDataset
-from utils import bacthfy,Evaluator,to_device
+from utils import bacthfy,to_device
 from model import TextCNN
-from config import get_args
+from config import get_args,check_args
 from evaluate import Evaluator
 
 logging.basicConfig(level = logging.INFO,format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -22,8 +21,6 @@ def train_simplifyweibo_4_moods(args):
     # preparing the dataset
     data_path = os.path.join(args.data_dir,args.dataset)
     result_path = os.path.join(args.result_dir,args.dataset)
-    if not os.path.exists(result_path):
-        os.makedirs(result_path)
     train_file_name = os.path.join(args.result_dir,args.dataset,"train.csv")
     test_file_name = os.path.join(args.result_dir,args.dataset,"test.csv")
     dict_file_name = os.path.join(args.result_dir,args.dataset,"dictionary.json")
@@ -60,7 +57,7 @@ def train_simplifyweibo_4_moods(args):
         loss_all /= len(train_dataloader)
         corr,f1_score_value,acc_score_value,jac_score_value = evaluator.evaluate(model,test_dataloader,device)
         evaluator.add_loss(loss_all)
-        logger.info(f"Epoches {epoch + 1}, complete!, avg loss {loss_all},f1-score{f1_score_value},accuracy-score{acc_score_value},jaccard-score{jac_score_value}.")
+        logger.info("Epoches %d, complete!, avg loss %0.4f,f1-score %0.4f,accuracy-score %0.4f,jaccard-score %0.4f."%(epoch + 1,loss_all,f1_score_value,acc_score_value,jac_score_value))
         loss_all/=len(train_dataloader)
         evaluator.end_time()
     evaluator.draw(args.model_name,result_path)
@@ -68,12 +65,12 @@ def train_simplifyweibo_4_moods(args):
     evaluator.save(evaluate_file_name)
 def main():
     args = get_args()
+    check_args()
     # First ,create a logger
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)  # Log level switch
     # Second, create a handler ,which is used for writing log files
-    rq = time.strftime('%Y%m%d%H%M', time.localtime(time.time()))
-    logfile = os.path.join(args.log_dir,rq + '.log')
+    logfile = os.path.join(args.log_dir,args.model_name + '.log')
     fh = logging.FileHandler(logfile, mode='w')
     fh.setLevel(logging.DEBUG)  
     # Third，define the output format for handler
