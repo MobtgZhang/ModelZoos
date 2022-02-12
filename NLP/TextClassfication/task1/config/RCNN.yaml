@@ -1,0 +1,8 @@
+model_name: "RCNN"
+embedding_dim: 300
+hidden_dim: 100
+linear_dim: 50
+num_layers: 1
+bidirectional: True
+rnn_type: "lstm"
+learning_rate: 0.02

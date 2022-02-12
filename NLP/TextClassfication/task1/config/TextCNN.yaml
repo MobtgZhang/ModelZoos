@@ -1,0 +1,8 @@
+model_name: "TextCNN"
+embedding_dim: 300
+num_filters: 64
+learning_rate: 0.01
+filters:
+ - 3
+ - 4
+ - 5

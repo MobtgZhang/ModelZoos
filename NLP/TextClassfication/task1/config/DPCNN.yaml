@@ -1,0 +1,5 @@
+model_name: "DPCNN"
+embedding_dim: 300
+num_filters: 32
+learning_rate: 0.02
+kernerl_word: 3

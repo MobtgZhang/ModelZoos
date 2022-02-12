@@ -1,0 +1,6 @@
+model_name: "CapsAttNet"
+embedding_dim: 300
+num_capsules: 4
+capsules_dim: 100
+num_routing: 3
+learning_rate: 0.02

@@ -1,0 +1,7 @@
+model_name: "TextRNN"
+embedding_dim: 300
+hidden_dim: 50
+num_layers: 4
+bidirectional: True
+rnn_type: lstm
+learning_rate: 0.00001 #1e-5

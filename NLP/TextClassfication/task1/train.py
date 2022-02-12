@@ -1,5 +1,6 @@
 import os
 import logging
+import yaml
 
 import torch
 import torch.nn as nn
@@ -9,7 +10,7 @@ from torch.utils.data import DataLoader
 from utils import build_simplifyweibo_4_moods_dataset
 from utils import LabelReviewSplitWordsDataset
 from utils import bacthfy,to_device
-from model import TextCNN
+from model import TextCNN, TextRNN, RCNN,CapsAttNet,DPCNN
 from config import get_args,check_args
 from evaluate import Evaluator
 
@@ -35,7 +36,35 @@ def train_simplifyweibo_4_moods(args):
     test_dataloader = DataLoader(test_dataset,batch_size=args.test_batch_size,shuffle=True,collate_fn=bacthfy,num_workers= args.num_workers)
 
     # preparing the model 
-    model = TextCNN(args.n_class,vocab_size=len(train_dataset.data_dict),embedding_dim=args.embedding_dim,num_filters=args.num_filters,max_seq_len=args.max_seq_len+2)
+    if args.model.lower() == "textcnn":
+        textcnn_yaml = os.path.join(args.config_dir,"TextCNN.yaml")
+        with open(textcnn_yaml,mode="r",encoding="utf-8") as rfp:
+            kwargs = yaml.safe_load(rfp.read())
+        model = TextCNN(args.n_class,vocab_size=len(train_dataset.data_dict),**kwargs)
+    elif args.model.lower() == "textrnn":
+        textcnn_yaml = os.path.join(args.config,"TextRNN.yaml")
+        with open(textcnn_yaml,mode="r",encoding="utf-8") as rfp:
+            kwargs = yaml.safe_load(rfp.read())
+        model = TextRNN(args.n_class,vocab_size=len(train_dataset.data_dict),**kwargs)
+    elif args.model.lower() == "rcnn":
+        rcnn_yaml = os.path.join(args.config_dir,"RCNN.yaml")
+        with open(rcnn_yaml,mode="r",encoding="utf-8") as rfp:
+            kwargs = yaml.safe_load(rfp.read())
+        model = RCNN(args.n_class,vocab_size=len(train_dataset.data_dict),**kwargs)
+    elif args.model.lower() == "capsattnet":
+        capsattnet_yaml = os.path.join(args.config_dir,"CapsAttNet.yaml")
+        with open(capsattnet_yaml,mode="r",encoding="utf-8") as rfp:
+            kwargs = yaml.safe_load(rfp.read())
+        model = CapsAttNet(args.n_class,vocab_size=len(train_dataset.data_dict),**kwargs)
+    elif args.model.lower() == "dpcnn":
+        dpcnn_yaml = os.path.join(args.config_dir,"DPCNN.yaml")
+        with open(dpcnn_yaml,mode="r",encoding="utf-8") as rfp:
+            kwargs = yaml.safe_load(rfp.read())
+        model = DPCNN(args.n_class,vocab_size=len(train_dataset.data_dict),**kwargs)
+    else:
+        raise ValueError("Unknown model name %s"%args.model)
+    kwargs["max_seq_len"] = args.max_seq_len
+    args.learning_rate = kwargs["learning_rate"]
     model.to(device)
     optimizer = optim.Adamax(model.parameters(),lr=args.learning_rate)
     loss_fn = nn.CrossEntropyLoss()
@@ -65,7 +94,7 @@ def train_simplifyweibo_4_moods(args):
     evaluator.save(evaluate_file_name)
 def main():
     args = get_args()
-    check_args()
+    check_args(args)
     # First ,create a logger
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)  # Log level switch
