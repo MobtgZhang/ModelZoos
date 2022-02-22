@@ -9,5 +9,5 @@
 + Adaboost 方法
 + 隐马尔科夫模型
 
-这里笔者用C++,Python,Julia以及MATLAB四种语言对上述的几种算法进行实现。
+这里笔者用C++,Python,Julia,Go,Rust以及MATLAB四种语言对上述的几种算法进行实现。
 
