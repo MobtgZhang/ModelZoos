@@ -30,6 +30,7 @@ $$H\left(Y\left|X\right.\right)=\sum\limits_{i=1}^{n}p_{i}H\left(Y\left|X=x_{i}\
 当熵和条件熵中的概率由数据估计(特别是极大似然估计)得到时候,所对应的熵与条件熵分别称为经验熵和经验条件熵.
 
 信息增益表示得知特征$X$的信息而使得类$Y$的信息的不确定性减少的程度.
+
 **定义(信息增益)**：特征$A$对训练数据集$D$的信息增益$g(D,A)$,定义为集合$D$的经验熵$H(D)$与特征$A$给定条件下$D$的经验条件熵$H\left(D\left|A\right.\right)$之差,即$$g(D,A)=H(D)-H\left(D\left|A\right.\right)$$
 一般地,熵$H(Y)$与条件熵$H\left(Y\left|X\right.\right)$之差称为互信息.决策树学习中的信息增益等价于训练数据集中类与特征的互信息.
 
